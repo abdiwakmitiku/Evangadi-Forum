@@ -2,28 +2,24 @@ const express = require("express");
 const app = express();
 const port = 4500;
 
+// user routes middleware file
+const userRoutes = require("./routes/userRoute")
+// questions routes middleware file
+const questionRoutes = require("./routes/questionRoute")
+// answers routes middleware file
+const answerRoutes = require("./routes/answerRoute")
 
 
+// user routes middleware
+app.use("/api/users",userRoutes)
 
 
+// questions routes middleware
+app.use("/api/users",questionRoutes)
 
 
-
-// register route
-app.post("/api/users/register", (req, res) => {
-  res.send("register user");
-});
-
-// login user
-app.post("/api/users/login", (req, res) => {
-  res.send("login user");
-});
-
-// check user
-app.get("/api/users/check", (req,res)=>{
-    res.send("check user")
-})
-
+// answers routes middleware
+app.use("/api/users",answerRoutes)
 
 
 
