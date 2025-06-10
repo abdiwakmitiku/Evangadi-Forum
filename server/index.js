@@ -12,6 +12,8 @@ const questionRoutes = require("./routes/questionRoute");
 // answers routes middleware file
 const answerRoutes = require("./routes/answerRoute");
 
+// Authentication Middleware
+const authMiddleware = require('./middleware/authMalware')
 
 
 // json middleware to extract our json data
@@ -21,10 +23,10 @@ const answerRoutes = require("./routes/answerRoute");
 app.use("/api/users", userRoutes);
 
 // questions routes middleware
-app.use("/api/users", questionRoutes);
+app.use("/api/questions",authMiddleware, questionRoutes);
 
 // answers routes middleware
-app.use("/api/users", answerRoutes);
+app.use("/api/answers",authMiddleware, answerRoutes);
 
 // async function start() {
 //   try {
