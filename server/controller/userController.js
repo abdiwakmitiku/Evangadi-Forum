@@ -47,7 +47,42 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-  res.send("login");
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Please Enter All Required Fields" });
+  }
+
+  try {
+    const [user] = await dbConnection.query(
+      "SELECT username, userid, password FROM users WHERE email = ?",
+      [email]
+    );
+    if (user.length == 0) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "Invalid Credential" });
+    }
+    // Compare Password
+    const isMatch = await bcrypt.compare(password, user[0].password);
+    if (!isMatch) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "Invalid Credential" });
+    }
+
+    return res.json({ user:user[0].password });
+
+
+
+    
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ msg: "Something Went Wrong, Please Try again Later" });
+  }
 }
 
 async function checkUser(req, res) {
