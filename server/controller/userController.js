@@ -2,7 +2,7 @@
 const dbConnection = require("../db/dbConfig");
 const bcrypt = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 async function register(req, res) {
   const { username, firstname, lastname, email, password } = req.body;
@@ -73,14 +73,15 @@ async function login(req, res) {
         .json({ msg: "Invalid Credential" });
     }
 
-    const username = user[0].username
-     const userid = user[0].userid
-    const token = jwt.sign({username, userid}, "secret", {expiresIn:"1d"})
+    const username = user[0].username;
+    const userid = user[0].userid;
+    const token = jwt.sign({ username, userid }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
-return res.status(StatusCodes.OK).json({msg:"User Login Successfully", token})
-
-
-    
+    return res
+      .status(StatusCodes.OK)
+      .json({ msg: "User Login Successfully", token });
   } catch (error) {
     console.log(error.message);
     return res
@@ -90,10 +91,10 @@ return res.status(StatusCodes.OK).json({msg:"User Login Successfully", token})
 }
 
 async function checkUser(req, res) {
-const username = req.user.username
-const userid = req.user.userid
+  const username = req.user.username;
+  const userid = req.user.userid;
 
-  res.status(StatusCodes.OK).json({msg:"Valid User", username, userid})
+  res.status(StatusCodes.OK).json({ msg: "Valid User", username, userid });
 }
 
 module.exports = { register, login, checkUser };

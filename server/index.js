@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = 4500;
@@ -13,20 +14,19 @@ const questionRoutes = require("./routes/questionRoute");
 const answerRoutes = require("./routes/answerRoute");
 
 // Authentication Middleware
-const authMiddleware = require('./middleware/authMalware')
-
+const authMiddleware = require("./middleware/authMalware");
 
 // json middleware to extract our json data
- app.use(express.json())
+app.use(express.json());
 
 // user routes middleware
 app.use("/api/users", userRoutes);
 
 // questions routes middleware
-app.use("/api/questions",authMiddleware, questionRoutes);
+app.use("/api/questions", authMiddleware, questionRoutes);
 
 // answers routes middleware
-app.use("/api/answers",authMiddleware, answerRoutes);
+app.use("/api/answers", authMiddleware, answerRoutes);
 
 // async function start() {
 //   try {
@@ -39,7 +39,6 @@ app.use("/api/answers",authMiddleware, answerRoutes);
 //   }
 // }
 // start();
-
 
 async function start() {
   try {
