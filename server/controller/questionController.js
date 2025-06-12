@@ -5,7 +5,7 @@ const { StatusCodes } = require("http-status-codes");
 
 
 
- async function postQuestion(req, res) {
+async function postQuestion(req, res) {
   const { username, userid } = req.user;
   const { title, description, tag } = req.body.question;
 
@@ -22,24 +22,24 @@ const { StatusCodes } = require("http-status-codes");
   }
 
   try {
-
-    const user =  await dbConnection.execute('INSERT INTO questions (userid, title, description, tag) VALUES (?, ?, ?, ?)', [userid, title, description, tag]) 
+     await dbConnection.execute(
+      'INSERT INTO questions (userid, title, description, tag) VALUES (?, ?, ?, ?)',
+      [userid, title, description, tag]
+    );
 
     res.status(StatusCodes.CREATED).json({
       msg: 'Question Created Successfully',
       title,
       question: description,
       created_by: {
-        userid: user.userid,
-        username,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email
+        userid,
+        username
       }
     });
   } catch (error) {
+    console.error(error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      error:"Internal Server Error",
+      error: "Internal Server Error",
       msg: "An unexpected error occurred."
     });
   }
@@ -47,45 +47,45 @@ const { StatusCodes } = require("http-status-codes");
 
 
 
- async function getAllQuestion(req, res) {
-  const userId = req.user?.user_id || null;
+//  async function getAllQuestion(req, res) {
+//   const userId = req.user?.user_id || null;
 
-  const query = `
-    SELECT 
-      q.question_id,
-      q.title,
-      q.description,
-      q.tag,
-      q.time,
-      q.views,
-      u.user_id,
-      u.username,
-      u.first_name,
-      u.last_name,
-      (SELECT COUNT(*) FROM likes WHERE question_id = q.question_id) AS likes_count,
-      ${
-        userId
-          ? `(SELECT COUNT(*) FROM likes WHERE question_id = q.question_id AND user_id = ?) AS liked_by_user`
-          : `0 AS liked_by_user`
-      }
-    FROM questions q
-    JOIN users u ON q.user_id = u.user_id
-    ORDER BY q.time DESC
-  `;
+//   const query = `
+//     SELECT 
+//       q.question_id,
+//       q.title,
+//       q.description,
+//       q.tag,
+//       q.time,
+//       q.views,
+//       u.user_id,
+//       u.username,
+//       u.first_name,
+//       u.last_name,
+//       (SELECT COUNT(*) FROM likes WHERE question_id = q.question_id) AS likes_count,
+//       ${
+//         userId
+//           ? `(SELECT COUNT(*) FROM likes WHERE question_id = q.question_id AND user_id = ?) AS liked_by_user`
+//           : `0 AS liked_by_user`
+//       }
+//     FROM questions q
+//     JOIN users u ON q.user_id = u.user_id
+//     ORDER BY q.time DESC
+//   `;
 
-  try {
-    const [rows] = userId
-      ? await connection.execute(query, [userId])
-      : await connection.query(query);
+//   try {
+//     const [rows] = userId
+//       ? await connection.execute(query, [userId])
+//       : await connection.query(query);
 
-    res.status(200).json({ questions: rows });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Failed to fetch questions',
-      error: error.message
-    });
-  }
-}
+//     res.status(200).json({ questions: rows });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Failed to fetch questions',
+//       error: error.message
+//     });
+//   }
+// }
 
  async function getSingleQuestion(req, res) {
   const { qid } = req.params;
@@ -114,4 +114,5 @@ const { StatusCodes } = require("http-status-codes");
 
 
 
-module.exports = { postQuestion, getSingleQuestion, getAllQuestion };
+module.exports = { postQuestion, getSingleQuestion,  };
+// getAllQuestion

@@ -8,8 +8,10 @@ const { postQuestion, getSingleQuestion,getAllQuestion } = require("../controlle
 // Post Question route
 router.post("/", postQuestion);
 
-// Get All Questions route
-router.post("/", getAllQuestion);
+
+
+// // Get All Questions route
+// router.post("/", getAllQuestion);
 
 // Get Single Question route
 router.post("/:question_id", getSingleQuestion);
