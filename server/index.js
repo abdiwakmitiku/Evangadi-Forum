@@ -20,13 +20,13 @@ const authMiddleware = require("./middleware/authMalware");
 app.use(express.json());
 
 // user routes middleware
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 
-// questions routes middleware
-app.use("/api/questions", authMiddleware, questionRoutes);
+// // questions routes middleware
+app.use("/api/question", authMiddleware, questionRoutes);
 
-// answers routes middleware
-app.use("/api/answers", authMiddleware, answerRoutes);
+// // answers routes middleware
+// app.use("/api/answer", authMiddleware, answerRoutes);
 
 // async function start() {
 //   try {

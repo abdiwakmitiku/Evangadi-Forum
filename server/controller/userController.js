@@ -19,8 +19,8 @@ async function register(req, res) {
     );
     if (user.length > 0) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "User Already Registered" });
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "User Already Existed" });
     }
     if (password.length <= 7) {
       return res
@@ -43,7 +43,7 @@ async function register(req, res) {
     console.log(error.message);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "Something Went Wrong, Please Try again Later" });
+      .json({ msg: "An Unexpected Error Occurred" });
   }
 }
 
@@ -62,14 +62,14 @@ async function login(req, res) {
     );
     if (user.length == 0) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.UNAUTHORIZED)
         .json({ msg: "Invalid Credential" });
     }
     // Compare Password
     const isMatch = await bcrypt.compare(password, user[0].password);
     if (!isMatch) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.UNAUTHORIZED)
         .json({ msg: "Invalid Credential" });
     }
 
@@ -86,7 +86,7 @@ async function login(req, res) {
     console.log(error.message);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "Something Went Wrong, Please Try again Later" });
+      .json({ msg: "An Unexpected Error Occurred" });
   }
 }
 

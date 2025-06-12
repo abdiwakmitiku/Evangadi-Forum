@@ -1,20 +1,17 @@
-const express = require('express')
-const router = express.Router()
+// const express = require('express')
+// const router = express.Router()
 
+// // Answer Controller
+// const { getAnswer, postAnswer} = require("../controller/answerController");
 
-// register route
-router.post("/register", register);
+// // Post-Answer route
+// router.post("/", postAnswer);
 
-// login user
-router.post("/login", (req, res) => {
-  res.send("login user");
-});
-
-// check user
-router.get("/check", (req,res)=>{
-    res.send("check user")
-})
+// // Get-Answer route
+// router.post("/:question_id", getAnswer);
 
 
 
-module.exports = router
+
+
+// module.exports = router
