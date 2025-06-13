@@ -1,8 +1,7 @@
 // db connection
 const dbConnection = require("../db/dbConfig");
-
 const { StatusCodes } = require("http-status-codes");
-
+const { v4: uuidv4 } = require('uuid');
 
 
 async function postQuestion(req, res) {
@@ -21,24 +20,27 @@ async function postQuestion(req, res) {
     });
   }
 
+    // Generate a UUID
+  const questionid = uuidv4()
+
   try {
      await dbConnection.execute(
-      'INSERT INTO questions (userid, title, description, tag) VALUES (?, ?, ?, ?)',
-      [userid, title, description, tag]
+      'INSERT INTO questions (questionid,userid, title, description, tag) VALUES (?, ?, ?, ?, ?)',
+      [questionid, userid, title, description, tag || null]
     );
 
-    res.status(StatusCodes.CREATED).json({
-      msg: 'Question Created Successfully',
+    return res.status(StatusCodes.CREATED).json({
+      msg: 'Question created successfully',
+      questionid,
       title,
-      question: description,
-      created_by: {
-        userid,
-        username
-      }
+      description,
+      tag: tag || null,
+      created_by: { userid, username },
+      created_at: new Date().toISOString()
     });
   } catch (error) {
     console.error(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal Server Error",
       msg: "An unexpected error occurred."
     });

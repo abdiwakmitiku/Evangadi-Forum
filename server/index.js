@@ -33,7 +33,7 @@ app.use("/api/question", authMiddleware, questionRoutes);
 //     const result = await dbConnection.execute("select 'test'");
 //     app.listen(port);
 //     console.log("database connection established");
-//     console.log(`listining on ${port}`);
+//     console.log(`listening on ${port}`);
 //   } catch (error) {
 //     console.log(error.message);
 //   }

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 // Question Controller
-const { postQuestion, getSingleQuestion,getAllQuestion } = require("../controller/questionController");
+const { postQuestion, getSingleQuestion, getAllQuestion } = require("../controller/questionController");
 
 
 // Post Question route
