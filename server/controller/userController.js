@@ -7,9 +7,10 @@ const jwt = require("jsonwebtoken");
 async function register(req, res) {
   const { username, firstname, lastname, email, password } = req.body;
   if (!username || !firstname || !lastname || !email || !password) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Please Provide All Required Fields!" });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      error: "Bad Request",
+      message: "Please Provide All Required Fields!",
+    });
   }
 
   try {
@@ -20,12 +21,13 @@ async function register(req, res) {
     if (user.length > 0) {
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "User Already Existed" });
+        .json({ error: "Conflict", message: "User Already Existed" });
     }
     if (password.length <= 7) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "Password Must be Atleast 8 characters" });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Bad Request",
+        message: "Password Must be Atleast 8 characters",
+      });
     }
 
     // encrypt the password
@@ -38,12 +40,12 @@ async function register(req, res) {
     );
     return res
       .status(StatusCodes.CREATED)
-      .json({ msg: "User Registered Successfully" });
+      .json({ message: "User Registered Successfully" });
   } catch (error) {
     console.log(error.message);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "An Unexpected Error Occurred" });
+      .json({ error: "Internal Server Error", message: "An Unexpected Error Occurred" });
   }
 }
 
@@ -52,7 +54,8 @@ async function login(req, res) {
   if (!email || !password) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Please Enter All Required Fields" });
+      .json({ error:"Bad Request",
+        message: "Please Enter All Required Fields" });
   }
 
   try {
@@ -63,14 +66,16 @@ async function login(req, res) {
     if (user.length == 0) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ msg: "Invalid Credential" });
+        .json({ error:"Unauthorized",
+          message: "Invalid Username or Password" });
     }
     // Compare Password
     const isMatch = await bcrypt.compare(password, user[0].password);
     if (!isMatch) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ msg: "Invalid Credential" });
+        .json({ error:"Unauthorized",
+          message: "Invalid Username or Password" });
     }
 
     const username = user[0].username;
@@ -81,12 +86,13 @@ async function login(req, res) {
 
     return res
       .status(StatusCodes.OK)
-      .json({ msg: "User Login Successfully", token });
+      .json({ message: "User Login Successfully", token });
   } catch (error) {
     console.log(error.message);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "An Unexpected Error Occurred" });
+      .json({ error: "Internal Server Error",
+        message: "An Unexpected Error Occurred" });
   }
 }
 
@@ -94,7 +100,7 @@ async function checkUser(req, res) {
   const username = req.user.username;
   const userid = req.user.userid;
 
-  res.status(StatusCodes.OK).json({ msg: "Valid User", username, userid });
+  res.status(StatusCodes.OK).json({ message: "Valid User", username, userid });
 }
 
 module.exports = { register, login, checkUser };
