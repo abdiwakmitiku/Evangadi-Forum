@@ -1,58 +1,49 @@
 // db connection
 const dbConnection = require("../db/dbConfig");
 const { StatusCodes } = require("http-status-codes");
-const { v4: uuidv4 } = require('uuid');
-
+const { v4: uuidv4 } = require("uuid");
 
 async function postQuestion(req, res) {
-  const { username, userid } = req.user;
+  const { userid } = req.user;
   const { title, description, tag } = req.body.question;
 
   if (!title || !description) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      msg: "Please Provide All Required Fields!"
+      error: "Bad Request",
+      message: "Please Provide All Required Fields!",
     });
   }
 
-  if (title.length < 10 || description.length < 15) {
+  if (title.length < 5 || description.length < 10) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      msg: "Please Make sure You Insert Valid Amount!"
+      message: "Please Make sure You Insert Valid Amount!",
     });
   }
 
-    // Generate UUID
-  const questionid = uuidv4()
+  // Generate UUID random strings for question ID
+  const questionid = uuidv4();
 
   try {
-     await dbConnection.query(
-      "INSERT INTO questions (questionid,userid, title, description, tag) VALUES (?, ?, ?, ?, ?)",
+    await dbConnection.query(
+      "INSERT INTO questions (questionid, userid, title, description, tag) VALUES (?, ?, ?, ?, ?)",
       [questionid, userid, title, description, tag || null]
     );
 
     return res.status(StatusCodes.CREATED).json({
-      msg: 'Question created successfully',
-      questionid,
-      title,
-      description,
-      tag: tag || null,
-      created_by: { userid, username },
-      created_at: new Date().toISOString()
+      message: "Question Created Successfully",
     });
   } catch (error) {
     console.error(error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal Server Error",
-      msg: "An unexpected error occurred."
+      message: "An unexpected error occurred.",
     });
   }
 }
 
-
-
 async function getAllQuestion(req, res) {
-  
   try {
-    const [questions] = await dbConnection.query(
+    const [allQuestions] = await dbConnection.query(
       `SELECT 
         q.questionid,
         q.title,
@@ -63,52 +54,75 @@ async function getAllQuestion(req, res) {
         u.username
        FROM questions q
        JOIN users u ON q.userid = u.userid
-       ORDER BY q.created_at DESC` // DESC for newest first
+       ORDER BY q.created_at DESC` // DESC is for sorting newest first
     );
-    if (questions.length === 0) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "No Questions Found." });
-  }
-    return res.status(StatusCodes.OK).json(questions)
+
+    const Questions = allQuestions.map((question) => ({
+      question_id: question.questionid,
+      title: question.title,
+      content: question.description,
+      user_name: question.username,
+      created_At: new Date(question.created_at).toISOString(),
+    }));
+
+    if (Questions.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Not Found", message: "No Questions Found." });
+    }
+
+    return res.status(StatusCodes.OK).json({ Questions });
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal Server Error",msg: "An Unexpected Error Occurred" });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "Internal Server Error",
+      message: "An Unexpected Error Occurred",
+    });
   }
 }
-
 
 async function getSingleQuestion(req, res) {
-  const questionid = req.params.questionid;
-  
   try {
+    const questionid = req.params.question_id;
+
     const [question] = await dbConnection.query(
-  `SELECT 
-    q.questionid,
-    q.title,
-    q.description,
-    q.created_at,
-    u.userid,
-    u.username
-   FROM questions q
-   JOIN users u ON q.userid = u.userid
-   WHERE q.questionid = ?`,  // This line is crucial
-  [questionid]  // This binds the parameter
-);
-    
-    if (!question.length) {
-      return res.status(404).json({ message: 'Question not found' });
+      `SELECT 
+        q.questionid,
+        q.title,
+        q.description,
+        q.tag,
+        q.created_at,
+        u.userid,
+        u.username
+       FROM questions q
+       JOIN users u ON q.userid = u.userid
+       WHERE q.questionid = ?`,
+      [questionid]
+    );
+
+    if (!question || question.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Not Found",
+        message: "The Requested Question Could Not Be Found",
+      });
     }
-    
-    res.json(question[0]);
+
+    const Response = {
+      Question: {
+        question_id: question[0].questionid,
+        title: question[0].title,
+        content: question[0].description,
+        user_id: question[0].userid,
+        created_at: new Date(question[0].created_at).toISOString(),
+      },
+    };
+
+    return res.status(StatusCodes.OK).json(Response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "Internal Server Error",
+      message: "An unexpected error occurred",
+    });
   }
 }
 
-
-
-
-
-module.exports = { postQuestion, getSingleQuestion,getAllQuestion  };
+module.exports = { postQuestion, getSingleQuestion, getAllQuestion };

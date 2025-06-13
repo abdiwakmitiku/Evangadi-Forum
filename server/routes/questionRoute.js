@@ -14,7 +14,7 @@ router.get("/", getAllQuestion);
 
 
 // Get Single Question route
-router.get("/:questionid", getSingleQuestion);
+router.get("/:question_id", getSingleQuestion);
 
 
 
