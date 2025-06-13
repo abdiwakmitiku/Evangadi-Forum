@@ -20,12 +20,12 @@ async function postQuestion(req, res) {
     });
   }
 
-    // Generate a UUID
+    // Generate UUID
   const questionid = uuidv4()
 
   try {
-     await dbConnection.execute(
-      'INSERT INTO questions (questionid,userid, title, description, tag) VALUES (?, ?, ?, ?, ?)',
+     await dbConnection.query(
+      "INSERT INTO questions (questionid,userid, title, description, tag) VALUES (?, ?, ?, ?, ?)",
       [questionid, userid, title, description, tag || null]
     );
 
@@ -49,66 +49,61 @@ async function postQuestion(req, res) {
 
 
 
-//  async function getAllQuestion(req, res) {
-//   const userId = req.user?.user_id || null;
-
-//   const query = `
-//     SELECT 
-//       q.question_id,
-//       q.title,
-//       q.description,
-//       q.tag,
-//       q.time,
-//       q.views,
-//       u.user_id,
-//       u.username,
-//       u.first_name,
-//       u.last_name,
-//       (SELECT COUNT(*) FROM likes WHERE question_id = q.question_id) AS likes_count,
-//       ${
-//         userId
-//           ? `(SELECT COUNT(*) FROM likes WHERE question_id = q.question_id AND user_id = ?) AS liked_by_user`
-//           : `0 AS liked_by_user`
-//       }
-//     FROM questions q
-//     JOIN users u ON q.user_id = u.user_id
-//     ORDER BY q.time DESC
-//   `;
-
-//   try {
-//     const [rows] = userId
-//       ? await connection.execute(query, [userId])
-//       : await connection.query(query);
-
-//     res.status(200).json({ questions: rows });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: 'Failed to fetch questions',
-//       error: error.message
-//     });
-//   }
-// }
-
- async function getSingleQuestion(req, res) {
-  const { qid } = req.params;
-  const query = `
-    SELECT q.*, u.username, u.first_name, u.last_name
-    FROM questions q
-    JOIN users u ON q.user_id = u.user_id
-    WHERE q.question_id = ?
-  `;
-
+async function getAllQuestion(req, res) {
+  
   try {
-    const [result] = await connection.execute(query, [qid]);
-    if (result.length === 0) {
-      return res.status(StatusCodes.NOT_FOUND).json({ message: 'Question not found' });
-    }
-    res.status(StatusCodes.OK).json({ question: result[0] });
+    const [questions] = await dbConnection.query(
+      `SELECT 
+        q.questionid,
+        q.title,
+        q.description,
+        q.tag,
+        q.created_at,
+        u.userid,
+        u.username
+       FROM questions q
+       JOIN users u ON q.userid = u.userid
+       ORDER BY q.created_at DESC` // DESC for newest first
+    );
+    if (questions.length === 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "No Questions Found." });
+  }
+    return res.status(StatusCodes.OK).json(questions)
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: 'Internal (Database error) occurred',
-      error: error.message
-    });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal Server Error",msg: "An Unexpected Error Occurred" });
+  }
+}
+
+
+async function getSingleQuestion(req, res) {
+  const questionid = req.params.questionid;
+  
+  try {
+    const [question] = await dbConnection.query(
+  `SELECT 
+    q.questionid,
+    q.title,
+    q.description,
+    q.created_at,
+    u.userid,
+    u.username
+   FROM questions q
+   JOIN users u ON q.userid = u.userid
+   WHERE q.questionid = ?`,  // This line is crucial
+  [questionid]  // This binds the parameter
+);
+    
+    if (!question.length) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+    
+    res.json(question[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
 
@@ -116,5 +111,4 @@ async function postQuestion(req, res) {
 
 
 
-module.exports = { postQuestion, getSingleQuestion,  };
-// getAllQuestion
+module.exports = { postQuestion, getSingleQuestion,getAllQuestion  };
