@@ -1,17 +1,17 @@
-// const express = require('express')
-// const router = express.Router()
+const express = require('express')
+const router = express.Router()
 
-// // Answer Controller
-// const { getAnswer, postAnswer} = require("../controller/answerController");
+// Answer Controller
+const { getAnswers, postAnswer} = require("../controller/answerController");
 
-// // Post-Answer route
-// router.post("/", postAnswer);
+// Post-Answer route
+router.post("/", postAnswer);
 
-// // Get-Answer route
-// router.post("/:question_id", getAnswer);
-
-
+// Get-Answer route
+router.get("/", getAnswers);
 
 
 
-// module.exports = router
+
+
+module.exports = router

@@ -25,8 +25,8 @@ app.use("/api/user", userRoutes);
 // // questions routes middleware
 app.use("/api/question", authMiddleware, questionRoutes);
 
-// // answers routes middleware
-// app.use("/api/answer", authMiddleware, answerRoutes);
+// answers routes middleware
+app.use("/api/answer", authMiddleware, answerRoutes);
 
 // async function start() {
 //   try {
