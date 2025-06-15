@@ -8,7 +8,7 @@ const { getAnswers, postAnswer} = require("../controller/answerController");
 router.post("/", postAnswer);
 
 // Get-Answer route
-router.get("/", getAnswers);
+router.get("/:question_id", getAnswers);
 
 
 
