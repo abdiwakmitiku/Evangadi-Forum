@@ -1,37 +1,19 @@
-import React from 'react'
+import React from "react";
+import { Route, Routes } from "react-router";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
-  // React example
-const [questions, setQuestions] = useState([]);
-const [sortOrder, setSortOrder] = useState('desc');
-
-const fetchQuestions = async () => {
-  const response = await fetch(`/api/questions?sort=${sortOrder}`);
-  const data = await response.json();
-  setQuestions(data);
-};
-
-// Toggle sort order
-const toggleSort = () => {
-  setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
-};
-
-// Usage
-<button onClick={toggleSort}>
-  Sort {sortOrder === 'desc' ? 'Oldest First' : 'Newest First'}
-</button>
-
-
-
-
-
-
-
-
-
   return (
-    <div>App</div>
-  )
+    <div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </div>
+  );
 }
 
-export default App
+export default App;
