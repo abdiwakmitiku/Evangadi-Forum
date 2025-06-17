@@ -23,6 +23,12 @@ async function register(req, res) {
         .status(StatusCodes.CONFLICT)
         .json({ error: "Conflict", message: "User Already Existed" });
     }
+    if (username.length <= 2) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Bad Request",
+        message: "Username Must be Atleast 4 characters",
+      });
+    }
     if (password.length <= 7) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: "Bad Request",
@@ -86,7 +92,7 @@ async function login(req, res) {
 
     return res
       .status(StatusCodes.OK)
-      .json({ message: "User Login Successfully", token });
+      .json({ message: "User Login Successfully", token, username });
   } catch (error) {
     console.log(error.message);
     return res
