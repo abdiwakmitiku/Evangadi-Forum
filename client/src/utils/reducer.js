@@ -1,10 +1,10 @@
 import { Type } from './action.type';
 
-export const InitialState = {
+export const initialState = {
   user:null
 };
 
-export const Reducer = (state, action) => {
+export const reducer = (state, action) => {
   switch (action.type) {
     case Type.SET_USER:
       return {

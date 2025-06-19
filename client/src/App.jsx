@@ -1,18 +1,12 @@
-import { BrowserRouter} from "react-router";
-import Router from "./Router";
-import { ContextProvider } from "./components/Context/Context";
-import { Reducer, InitialState } from "./utils/reducer";
-
+import { BrowserRouter } from "react-router"; // Using core package
+import AppRouter from "./Router";
 
 function App() {
   return (
     <BrowserRouter>
-      <ContextProvider Reducer={Reducer} InitialState={InitialState}>
-        <Router />
-      </ContextProvider>
+      <AppRouter />
     </BrowserRouter>
   );
 }
 
 export default App;
-
