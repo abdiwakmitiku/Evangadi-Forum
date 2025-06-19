@@ -26,7 +26,7 @@ function ProtectedRoute({ children }) {
   }
 
   if (!user) {
-    return <Navigate to="/" replace state={{ from: location }} />;
+    return <Navigate to="/auth" replace state={{ from: location }} />;
   }
 
   return children;

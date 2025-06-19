@@ -3,13 +3,14 @@ import React from "react";
 function Footer() {
   return (
     <>
-      <div>Logo 
+    <h1>Footer</h1>
+      {/* <div>Logo 
         <div>Icons</div>
       </div>
       <div>Footer
         <div>lists</div>
       </div>
-      <div>Footer</div>
+      <div>Footer</div> */}
     </>
   );
 }
