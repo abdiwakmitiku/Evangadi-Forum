@@ -2,31 +2,30 @@ import React, { useEffect, useContext, useState } from "react";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
-import Auth from "./pages/Auth/Auth";
-import { Routes, Route, useNavigate } from "react-router";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import axios from "./utils/axiosConfig";
 import { DataContext } from "./components/DataProvider/DataProvider";
 import { Type } from "./utils/action.type";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function Router() {
-
   const [{ user }, dispatch] = useContext(DataContext);
   const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       await checkUser();
-
     })();
   }, []);
 
   async function checkUser() {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-    const user_id = localStorage.getItem("user_id");
-    if (!token || !username || !user_id) {
+
+    if (!token || !username) {
       dispatch({ type: Type.SET_USER, user: null });
-      navigate("/");
+      navigate("/auth/login");
       return;
     }
     try {
@@ -37,11 +36,11 @@ function Router() {
         type: Type.SET_USER,
         user: res?.data?.user || null,
       });
+      navigate("/");
     } catch (error) {
       console.error(error?.response?.data || error.message);
       dispatch({ type: Type.SET_USER, user: null });
-      navigate("/");
-
+      navigate("/auth/login");
     }
   }
 
@@ -57,8 +56,10 @@ function Router() {
             </ProtectedRoute>
           }
         />
-        <Route path="/auth" element={<Auth />} />
-
+        <Route path="/auth" element={<Navigate to="/auth/login" />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Route>
       </Routes>
       <Footer />
     </>
@@ -66,11 +67,6 @@ function Router() {
 }
 
 export default Router;
-
-
-
-
-
 
 // import React, { useEffect, useContext, useState } from "react";
 // import Header from "./components/Header/Header";

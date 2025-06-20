@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import {Link, useNavigate} from "react-router"
-import axios from "../utils/axiosConfig";
+import {Link, useNavigate} from "react-router-dom"
+import axios from "../../utils/axiosConfig";
 
 function Register() {
   const navigate = useNavigate()
@@ -73,7 +73,7 @@ function Register() {
         </div>
         <button type="submit">Register</button>
       </form>
-      <Link to={'/login'}>Login</Link>
+      <Link to={'/auth/login'}>Login</Link>
     </section>
   );
 }

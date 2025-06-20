@@ -13,23 +13,71 @@
 
 // export default ProtectedRoute;
 
-import React, { useContext } from "react";
-import { Navigate, useLocation } from "react-router"; // From react-router
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useContext } from "react";
+// import { Navigate } from "react-router-dom";
+// import { DataContext } from "../DataProvider/DataProvider";
+
+// function ProtectedRoute({ children }) {
+//   const [{ user, loading }] = useContext(DataContext);
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (!user) {
+//     return <Navigate to="/auth/login" replace />;
+//   }
+
+//   return children;
+// }
+
+// export default ProtectedRoute;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { DataContext } from "../DataProvider/DataProvider";
 
 function ProtectedRoute({ children }) {
-  const [{ user, loading }] = useContext(DataContext);
-  const location = useLocation();
+  const navigate = useNavigate();
+  const [{ user }, dispatch] = useContext(DataContext);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace state={{ from: location }} />;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user]);
 
   return children;
 }
 
 export default ProtectedRoute;
+
