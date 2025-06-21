@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+zno.server
+zno.client
+.env
+audio.opus
+aclient
+acontroller
+
 
 # Editor directories and files
 .vscode/*
